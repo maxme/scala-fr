@@ -348,3 +348,131 @@ afficherait Sum(Var(x), Const(1)));
 - les instance de ces classes peuvent être décomposées par *pattern matching*
 comme nous le verrons par la suite.
 
+Maintenant que nous avons définie un type de données pour représenter nos
+expressions arithmétiques, nous pouvons définir des opérations pour les
+manipuler. Nous allons débuter par une fonction qui évalue une expression
+dans un environnement. L'objectif de l'environnement est de donner des valeurs
+aux variables. Par exemple, l'expression x+1 évaluée dans un environnement
+qui associe la valeur 5 à la variable x, écrit par {x->5} renvoie 6.
+
+Par ailleurs, il faut une structure pour représenter un environnement.
+Il est possible d'utiliser une table de hashage mais nous allons utiliser
+directement des fonctions! En effet, un environnement n'est rien de plus
+qu'une fonction qui associe une valeur à variable. L'environnement 
+{x->5} donné auparavant peut être simplement écrit comme :
+
+    { case "x" => 5 }
+
+Cette notation définit une fonction qui quand on donne une chaine "x"
+comme argument retourne 5 et échoue avec une exception autrement.
+
+Avant d'écrire une fonction d'évaluation, donnons un nom au type chargés
+de représenter les environnements. Il serait possible d'utiliser à chaque
+fois String => Int pour un environnement mais cela simplifie le programme
+et la lisibilité si nous lui associons un nom. Ceci est réalisé en Scala
+avec la notation suivante :
+
+    type Environment = String => Int
+
+Maintenant, le type Environment peut être utilisé comme un alias.
+
+Nous pouvons maintenant donner une définition à la fonction d'évaluation.
+Conceptuellement, c'est très simple: la valeur d'une somme de deux
+expressions est simplement la somme des deux valeurs de ces deux expressions;
+la valeur d'une variable est obtenue directement par l'environnement; et la
+valeur d'une constante est la constante même. Ecrire ceci en Scala n'est
+guère compliqué :
+
+    def eval(t: Tree, env: Environment): Int = t match {
+      case Sum(l, r) => eval(l, env) + eval(r, env)
+      case Var(n)	 => env(n)
+      case Const(v)  => v
+    }
+
+ La fonction d'évaluation fonctionne en réalisant une recherche sur
+l'arbre t. Intuitivement, le sens de la définition précédente est
+claire :
+
+1. Premièrement, cette fonction vérifie si l'arbre t est une somme. Si
+c'est le cas, il lie l'arbre t à la variable l et l'environnement env
+à r et réalise l'évaluation à droite;
+2. si le premier case ne correspond pas, on passe on suivant, on vérifie
+s'il s'agit d'une variable
+3. en cas de nouvel echec, on vérifie s'il s'agit d'une constante
+4. enfin, si aucune correspondance n'est trouvée, une exception est 
+déclenchée.
+
+Nous voyons ainsi que le concept de *pattern matching* est une recherche
+de correspondance.
+
+Un développeur ayant des notions de programmation object rétorquerait
+qu'il serait tout aussi possible de définir la fonction eval pour 
+la classe Tree et ses classes filles. Ceci est tout à fait possible. Ce
+choix n'est pas qu'une question de gout. En fait, il s'agit surtout
+d'extensibilité :
+
+- quand on utilise l'héritage de méthodes, il est facile d'ajouter de
+nouveau type de noeud mais l'ajout d'une opération nécessite de modifier
+tous les types de noeuds pour prendre en compte la nouvelle opération;
+- quand on utilise le pattern matching, la situation est inversée : ajouter
+une nouvelle sorte de noeud nécessite la modification de toutes les fonctions
+qui réalise le pattern matching de l'arbre; mais ajouter une nouvelle
+opération est simplicissime en définissant juste une nouvelle fonction;
+
+Pour explorer davantage le *pattern matching*, nous allons définir une
+autre opération sur les expressions arithmétiques: la dérivée. Rappelez
+vous:
+
+1. la dérivée d'une somme est la somme des dérivées;
+2. la dérivation d'une variable v est 1 si v est une variable
+sur laquelle on dérive sinon 0;
+3. la dérivée d'une constante est 0.
+
+Ces règles peuvent simplement être traduite en Scala par :
+
+    def derive(t: Tree, v: String): Tree = t match {
+      case Sum(l, r) => Sum(derive(l, v), derive(r, v)) 
+      case Var(n) if (v == n) => Const(1) 
+      case _ => Const(0)
+    }
+
+Cette fonction introduit deux nouveaux concepts relatifs au *pattern
+matching*. Avant tout chose, notre expression case dispose d'une
+condition sur un case; on appelle ceci une *guard*. Cette *guard* indique
+sur le second case que si seulement si v==n alors on retourne Const(1).
+La seconde nouveauté est le *wild-card*, noté _ qui indique le cas par
+défaut si rien ne correspond.
+
+Nous n'allons pas davantage explorer le pattern matching pour ne pas
+alourdir ce document. Mais avant de quitter ce concept, nous allons
+voir comment nos deux fonctions se comportent sur un cas réel.
+Pour réaliser ceci, nous allons écrire une simple fonction main qui réalise
+diverses opérations sur l'expression (x+x)+(7+y): cela va calculer sa
+valeur pour l'environnement {x->5, y->7} puis calculer la dérivée relative
+à x puis à y.
+
+    def main(args: Array[String]) { 
+      val exp: Tree = Sum(Sum(Var("x"),Var("x")),Sum(Const(7),Var("y")))
+      val env: Environment = { case "x" => 5 case "y" => 7 } 
+      println("Expression: " + exp) 
+      println("Evaluation with x=5, y=7: " + eval(exp, env)) 
+      println("Derivative relative to x:\n " + derive(exp, "x")) 
+      println("Derivative relative to y:\n " + derive(exp, "y"))
+    }
+
+L'exécution de ce programme, nous donne:
+
+    Expression: Sum(Sum(Var(x),Var(x)),Sum(Const(7),Var(y)))
+    Evalutation with x=5, y=7: 24
+    Derivative relative to x:
+      Sum(Sum(Const(1),Const(1)),Sum(Const(0),Const(0)))
+	Derivative relative to y: 
+	  Sum(Sum(Const(0),Const(0)),Sum(Const(0),Const(1)))
+  
+En examinant les résultats, on s'aperçoit que l'on pourrait simplifier
+les valeurs pour nos utilisateurs. Définir une fonction de simplification
+en utilisant le matching pattern est très intéressant car pas si aisé.
+Nous vous laissons ce petit plaisir.
+
+# Traits
+  
