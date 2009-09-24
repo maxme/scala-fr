@@ -1,0 +1,3 @@
+src/            # code samples
+translation/    # documentation translations
+site/           # scala-fr.org related files (css, etc...)
