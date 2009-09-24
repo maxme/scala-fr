@@ -1,6 +1,7 @@
 # Tutoriel Scala pour développeurs Java
 
 Texte original par Michel Schinz, Philipp Haller
+
 Traduction par Laurent Mallet et Maxime Biais
 
 ## Introduction
@@ -475,4 +476,163 @@ en utilisant le matching pattern est très intéressant car pas si aisé.
 Nous vous laissons ce petit plaisir.
 
 # Traits
+
+Importer du code dans une classe, peut être réalisé soit:
+
+- en héritant d'une classe;
+- en utilisant un *trait*;
+
+Pour un développeur Java, un trait peut être vu comme une interface
+qui contiendrait du code. En scala, quand une classe hérite d'un *trait*,
+elle implemente son interface et hérite de tout le code contenu dans le
+*trait*.
+
+Pour comprendre l'intérêt des traits, nous allons utiliser un exemple
+classique: les objets comparables. Souvent utile de comparer
+des objets ne serait ce que pour les trier. Si l'on développait en java,
+nos objets implémenteraient l'interface *Comparable*. 
+
+Quand on compare des objets, six prédicats sont nécessaires: inférieur,
+inférieur ou égal, égal, différent, plus grand, plus grand ou égal.
+Toutefois, définir chacune d'elle serait pénible, d'autant plus qu'
+implémenter deux suffit à définir les 6. Sachant cela, toutes les opérations
+peuvent être définies comme ceci :
+
+    trait Ord {
+      def < (that: Any): Boolean 
+      def <=(that: Any): Boolean = (this < that) || (this == that) 
+      def > (that: Any): Boolean = !(this <= that) 
+      def >=(that: Any): Boolean = !(this < that)
+    }
+
+Ces quelques lignes définissent un nouveau type nommé Ord, qui joue le
+même rôle que l'interface Comparable en Java  avec une implémentation
+par défaut de trois des quatre prédicats. L'égalité et l'inégalité ne sont
+pas implémentés dans ce trait puisqu'ils sont fournies pour tous les objets
+Scala.
+
+Le type *Any* qui est utilisé ci-dessus est le type Racine qui est parent de
+toutes les types en Scala. Il peut être comparé à une version plus générique
+encore que le type *Object* en Java. Pour rappel, tout est objet en Scala 
+(Int, Float...).
+
+Pour rendre des objets d'une class comparable, il suffit alors de définir
+les prédicats qui testent l'égalité et l'infériorité et greffer la classe
+Ord. Comme exemple, définissons une classe Date, représentant des dates
+dans le calendrier Gregorian. De telles dates sont composées d'une journée,
+d'un mois et d'une année sous forme d'entiers. Voici le code: 
+
+    class Date(y: Int, m: Int, d: Int) extends Ord {
+      def year = y 
+      def month = m 
+      def day = d
+    
+      override def toString(): String = year + "-" + month + "-" + day
+    }
+
+La partie importante est la déclaration *extends* qui suit le nom de la
+classe et les paramètres et qui indique que la classe date hérite du
+trait Ord.
+
+Ensuite, nous ajoutons le code correspondant à la méthode equals, de
+telle manière que les champs de la date soient comparés un par un. 
+L'implémentation fournit par Object n'est pas utilisable car il s'agit
+du equals Java. Voici le code correspondant :
+
+    override def equals(that: Any): Boolean = 
+      that.isInstanceOf[Date] && {
+	    val o = that.asInstanceOf[Date] 
+	    o.day == day && o.month == month && o.year == year
+	}
+
+Cette méthode utilise des méthodes prédéfinies:
+
+- isInstanceOf: ceci correspond à l'opérateur Java instanceof qui retourne
+vraie si et seulement si l'objet est bien une instance du type demandé
+- InstanceOf: ceci correspond à l'opérateur cast de java.
+
+Enfin, la dernière méthode à définir est l'infériorité. Elle utilise une
+autre méthode prédéfinie error qui émet une exception avec le message
+correspondant :
+
+    def <(that: Any): Boolean = {
+      if (!that.isInstanceOf[Date])
+        error("cannot compare " + that + " and a Date")
+      val o = that.asInstanceOf[Date]
+      (year < o.year) || (year == o.year && (month < o.month ||
+                      (month == o.month && day < o.day)))
+    }
+
+Ceci complète la définition de notre classe Date. Une instance Date
+peut ainsi être vu soit comme une date soit comme un objet comparable.
+Enfin, ce code définit et implémente les 6 opérations de comparaisons.
+
+Les traits peuvent être utilisé dans d'autres situations que celles
+décrites ci-dessus. Mais discuter plus avant de leur usage dépasse le
+cadre de ce document.
+
+# Généricité
+
+La dernière caractéristique que nous allons étudier dans ce tutoriel est
+la généricité. Les développeurs java doivent être conscient des problèmes
+engendrés par l'absence de la généricité dans leur langage même si une
+approche a été implémentée dans Java 1.5.
+
+La généricité est la capacité d'écrire un code dont les types peuvent être
+paramétrés. Par exemple, un développeur qui écrit une librairie pour des
+listes chainées rencontrera le problème des types qui peuvent être utilisés
+dans sa liste chainée. Comme la liste peut être utilisée dans différents
+contextes, il n'est pas possible de décider que le type d'élément supporté
+est Int. Ceci serait complètement arbitraire et trop restrictif.
+
+Un développeur Java utiliserait probablement un héritage de la classe Object.
+Cette solution est toutefois loin d'être idéale puisque cela ne marche pas
+avec les types basiques et implique que de nombreux *dynamic cast* seront
+utilisés par les utilisateurs de la librairie.
+
+Scala permet de définir des classes génériques (et des méthodes) pour résoudre
+ce problème. Etudions pour cela un conteneur simpliste: une référence
+qui peut soit contenir un objet d'un type soit rien.
+
+  class Reference[T] { 
+    private var contents: T = _
+    
+    def set(value: T) { contents = value } 
+    def get: T = contents
+  }
+
+La classe *Reference* est paramétré par un type, noté T, qui est le type
+de ses éléments. Ce type est utilisé dans le corps de la classe comme 
+type des variables.
+
+L'exemple précédent introduit de nouvelles variables, auto-compréhensibles.
+Il est toutefois intéressant de voir que la valeur initiale fournie à
+cette variable est _, qui représente la valeur par défaut :
+
+- 0 pour les types numériques;
+- false pour le type Boolean;
+- () pour le type Unit
+- null pour les autres types;
+
+Pour utiliser cette classe, il suffit de spécifier le type désiré pour
+le type paramètrique T. Par exemple, pour créer et utiliser un conteneur
+contenant un entier, on peut écrire :
+
+   object IntegerReference { 
+     def main(args: Array[String]) {
+	   val cell = new Reference[Int]
+	   cell.set(13) println("Reference contains the half of " + (cell.get * 2))
+     }
+   }
+
+Comme vu ci-dessus, il n'est pas nécessaire de faire des conversions. 
+Enfin, il n'est pas possible d'y stocker un autre type que des entiers
+comme attendu.
+
+# Conclusion
+
+Ce document nous donne un aperçu rapide du langage java et nous a présenté
+quelques exemples basiques. Le lecteur intéressé peut maintenant continuer
+avec le document "Scala By Example", qui contient des exemples bien plus
+avancés ou consulter "Scala Language Specification" si besoins.
   
