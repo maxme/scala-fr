@@ -1,0 +1,64 @@
+# Tutoriel Scala pour développeurs Java
+
+Texte original par Michel Schinz, Philipp Haller
+Traduction par Laurent Mallet et Maxime Biais
+
+## Introduction
+
+Ce document est une introduction rapide au langage Scala et à son compilateur. Il a pour
+cible les développeurs expérimentés et pour objectif la découverte des possibilités
+fournies par le langage Scala. La connaissance de la programmation object en java est
+un pré-requis.  
+
+## Premier exemple
+
+Comme premier exemple, nous allons écrire le très classique HelloWorld. Guère passionant
+mais cela nous permettra de nous familiariser avec les outils de Scala sans trop dépendre
+des spécificités du langage. Voici le très fameux HelloWorld:
+
+`
+object HelloWorld { 
+  def main(args: Array[String]) {
+	println("Hello, world!")
+  }
+}
+`
+
+La structure du programme ne devrait pas déconcerté les développeurs Java. On découvre
+une méthode *main* qui récupère les arguments en ligne de commande sous forme d'un
+tableau de chaînes de caractères comme paramètre. Le corps de la méthode consiste en
+un simple appel à la méthode prédéfinie *println* avec la fameuse formule. La méthode
+*main* ne retourne rien (c'est une procédure). C'est pourquoi il n'y a aucune
+déclaration de type de retour.
+
+La nouveauté pour les développeurs Java est la déclaration **object** qui contient la
+méthode main. En fait, il s'agit ni plus ni moins qu'une déclaration de singleton, c'est
+à dire une classe avec une unique instance. Cette déclaration indique la définition d'une
+classe et d'une unique instance, qui sera créée lors de sa première utilisation.
+
+Le lecteur attentif aura noté que la méthode main n'est pas déclarée comme *statique* avec
+le mot clef *static*. Ce mot clef n'existe pas en Scala (ni pour les méthodes ni pour
+les champs). Le développeur Scala utilisera donc les singletons en lieu et place de static.
+
+## Compilation de l'exemple
+
+Pour compiler l'exemple, nous utilisons *scalac*, le compilateur scala. *scalac* fonctionne
+comme de nombreux compilateurs: il prend comme argument un fichier source, avec souvent des
+options et produit un ou plusieurs fichiers binaires. Les binaires produits sont en fait des
+fichiers standards *.class* .
+
+Si nous avons sauvé le programme précédent dans un fichier appelé HelloWorld.scala, nous
+pouvons le compiler avec la commande suivante (le symbole '>' représente le prompt):
+
+> scalac HelloWorld.scala
+
+Ceci va générer quelques fichiers class dans le répertoire courant, dont l'un d'entre eux
+s'appelle **HelloWorld.class**, et contient une classe qui peut être directement exécutée
+en utilisant la commande scala comme le montre la section précédente.
+
+## Faire fonctionner l'exemple
+
+
+
+
+
