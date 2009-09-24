@@ -16,13 +16,13 @@ Comme premier exemple, nous allons écrire le très classique HelloWorld. Guère
 mais cela nous permettra de nous familiariser avec les outils de Scala sans trop dépendre
 des spécificités du langage. Voici le très fameux HelloWorld:
 
-`
-object HelloWorld { 
-  def main(args: Array[String]) {
-	println("Hello, world!")
-  }
-}
-`
+
+    object HelloWorld { 
+      def main(args: Array[String]) {
+	    println("Hello, world!")
+      }
+    }
+
 
 La structure du programme ne devrait pas déconcerté les développeurs Java. On découvre
 une méthode *main* qui récupère les arguments en ligne de commande sous forme d'un
@@ -50,7 +50,10 @@ fichiers standards *.class* .
 Si nous avons sauvé le programme précédent dans un fichier appelé HelloWorld.scala, nous
 pouvons le compiler avec la commande suivante (le symbole '>' représente le prompt):
 
-> scalac HelloWorld.scala
+
+    > scalac HelloWorld.scala
+
+
 
 Ceci va générer quelques fichiers class dans le répertoire courant, dont l'un d'entre eux
 s'appelle **HelloWorld.class**, et contient une classe qui peut être directement exécutée
@@ -58,7 +61,290 @@ en utilisant la commande scala comme le montre la section précédente.
 
 ## Faire fonctionner l'exemple
 
+Une fois compilé, un programme Scala peut être exécuté avec la commande
+*Scala*. Son usage est semblable à la commande java et accepte les mêmes
+options. L'exemple précédent peut être exécuté en utilisant la commande
+suivante qui produit le résultat attendu :
+
+
+    > scala -classpath . HelloWorld
+    
+    Hello, world!
 
 
 
+# Interaction avec Java
+
+L'une des forces de Scala est qu'il est facile d'interagir avec du code
+Java. Ainsi toutes les classes du package *Java.lang* sont importées par
+défaut; les autres doivent l'être explicitement.
+
+Un petit exemple vaut mieux que 10 pages d'explications. Nous allons tenter
+d'obtenir et d'afficher la date en respectant les conventions d'un pays
+spécifique, par exemple la France.
+
+
+Les librairies Java constituent de puissants outils, telless que les classes
+*Date* et *DateFormat*. Comme Scala interopère très bien avec java, point
+besoins de réimplementer des classes équivalentes. Il suffit de les 
+importer:
+
+    import java.util.{Date, Locale}
+    import java.text.DateFormat 
+    import java.text.DateFormat._
+    
+    object FrenchDate { 
+      def main(args: Array[String]) {
+        val now = new Date 
+        val df = getDateInstance(LONG, Locale.FRANCE) 
+        println(df format now)
+      }
+    }
+
+
+
+Note: Scala est d'origine suisse et certains suisses parlent le français
+d'où ce choix.
+
+L'import Scala est très similaire à l'équivalent Java, mais il est toutefois
+plus puissant. De multiples classes peuvent être importées avec les accolades.
+Une autre différence, il est possible d'importer tous les noms d'un package
+ou d'une classe en utilisant le caractère undescore (_) au lieu de l'asterisque
+(*). Ce dernier point est du au faut que le caractère * est un identifiant
+Scala, comme nous le verrons plus tard.
+
+L'import utilisé en troisième ligne importe tous les membres de la classe
+DateFormat et rend visibles également les méthodes statiques comme 
+getDateInstance et le champ statique LONG.
+
+Dans la méthode main nous créons une instance de la classe Java Date qui
+contient par défaut la date courante. Ensuite, nous définissons le format
+désiré avec la locale France. La dernière ligne montre une propriété
+élégante de la syntace Scala. Les méthodes avec un unique argument peuvent
+se passer de parenthèse (infix syntax). Ainsi la ligne
+
+    df format now
+
+est équivalent à 
+
+    df format(now)
+
+Ceci pourrait sembler être un détail mineur mais cela des conséquences
+importantes comme nous allons le voir dans la section suivante.
+
+Pour conclure cette section concernant l'intégration avec Java, il doit
+être noté qu'il possible également d'hériter de classes Java et d'implémenter
+des classes Java directement en Scala.
+
+# Tout est object
+
+Scala est langage **pur objet**, dans le sens où tout est un objet, que
+ce soit les nombres où les fonctions. Cela diffère avec Java où certains
+types comme les *boolean* ou les *int* ne sont pas des classes et que
+les fonctions ne peuvent être manipulées comme des valeurs.
+
+## Les nombres sont des objets
+
+Comme les nombre sont des objets, ils ont des méthodes. En fait, l'expression
+arithèmitique suivante :
+
+    1 + 2 * 3 / x
+
+consiste en des appel de méthodes *infix*:
+
+    (1).+(((2).*(3))./(x))
+
+Cela signifie que +, *, ... sont des identifiants valides en Scala.
+
+Les parenthèses autour des nombres dans la seconde version sont nécessaires
+car le parseur Scala utilise une reconnaissance d'expression basé sur la plus
+longue expression reconnue. Ainsi, l'expression suivante :
+
+    1.+(2)
+
+est découpée en élément 1., + et 2. En effet 1 et 1. sont reconnus par le
+parseur mais 1. est plus long. Donc 1. est interprété comme 1.0, qui est un
+*Double*. Ecrire
+
+    (1). + (2)
+
+préviens 1 d'être interprété comme un *Double*.
+
+## Les fonctions sont des objets
+
+Peut être le plus étonnant pour un développeur Java, les fonctions sont
+des objets en Scala. Il est alors possible de passer des fonctions comme
+un argument et de les stocker dans des variables et des les faire manipuler
+par d'autres fonctions. Ce paradigme est la programmation fonctionnelle.
+
+Comme exemple des possibilités offertes, nous allons considérer une fonction
+*timer* qui doit réaliser une action toutes les secondes. Comment transmettre
+l'action à réaliser ? Simplement comme une fonction. Ce type de passage
+doit être familié à de nombreux développeurs. Ceci est souvent utilisé
+dans la définition de GUI où l'on utilise des fonctions *callbacks*.
+
+Dans le programme suivant, la fonction timer est appelée oncePerSecond et
+elle prend une fonction callback en argument. La fonction est déclarée comme
+() => Unit ce qui correspond à une fonction qui ne prend pas aucun argument
+et retourne rien (le type Unit correspond au type void en C/C++). La fonction
+principale de ce programme appelle simplement cette fonction timer avec un
+callback qui affiche une phrase sur le terminal "time flies like an arrow..."
+
+
+    object Timer {
+      def oncePerSecond(callback: () => Unit) {
+        while (true) { callback(); Thread sleep 1000 }
+      }
+      
+      def timeFlies() {
+      	println("time flies like an arrow...") 
+      }
+	
+	  def main(args: Array[String]) { 
+	    oncePerSecond(timeFlies)
+	  }
+	}
+
+Note: nous avons utilisé la fonction prédefinie println et non celle correspndant
+à System.out
+
+### Fonction anonymes
+
+Comme ce programme est simple à comprendre, il est possible de l'affiner
+quelque peu. Premièrement, remarquons que la fonction timeFlies est 
+définie seulement pour être passée plus tard dans la fonction oncePerSecond.
+Donner un nom à cette fonction, qui n'est utilisée qu'une fois semble superflu.
+Déclarer directement la fonction là où elle est utilisée semblerait plus
+élégant. Ceci est possible en Scala en utilisant les fonctions anonymes:
+des fonctions sans nom. La version re-visitée du programmé précédent avec une
+fonction anonyme donne :
+
+    object TimerAnonymous { 
+      def oncePerSecond(callback: () => Unit) {
+        while (true) { callback(); Thread sleep 1000 }
+      }
+
+      def main(args: Array[String]) {
+        oncePerSecond(() => 
+          println("time flies like an arrow..."))
+      }
+    }
+
+La présence de fonction anonyme dans cet exemple est révélé par la flèche
+droite *=>* qui sépare les arguments de la fonction de son corps. Dans cet
+exemple, la liste des arguments est vide d'où le () à la droite de =>. Le
+corps de la fonction anonyme ne change pas.
+
+## Les Classes
+
+Comme vu auparavant, Scala est un langage orienté objet et donc possède le
+concept de classe. Les classes sont déclarés en Scala dans une syntaxe proche
+du java. Une différence est que les classes en Java peuvent avoir des parametres.
+Ceci est illustré dans la définition de la classe Complex
+
+    class Complex(real: Double, imaginary: Double) {
+      def re() = real 
+      def im() = imaginary
+    }
+
+La classe Complex prend deux arguments qui sont les parties réelles et
+imaginaires d'un complexe. Ces deux arguments doivent être fourni lors
+la création d'une instance de la classe Complex comme ceci:
+**new** Complex(1.5, 2.3). La classe contient deux méthodes appellées
+re et im donnant accès à ces deux valeurs.
+
+Il doit être noté que le type retour de ces méthodes n'est pas donné
+explicitement. Ils sont déduits automatiquement par le compilateur, qui
+étudie la partie droite des méthodes et en déduit le type Double.
+
+Le compilateur ne peut pas toujours déduire le type de retour et il n'existe
+pas de règle simple pour le savoir. Dans la pratique, si le compilateur
+n'arrive pas à déduire les types, il émet une erreur et vous devrez donc
+lui fournir explicitement le type retour. Avec l'expérience, vous serez
+capable de sentir quand préciser le type ou ne pas le préciser.
+
+### Methodes sans arguments
+
+Un petit problème des méthodes re et im est qu'il est nécessaire de les
+appeler avec une paire de parenthèses vides comme le montre cet exemple:
+
+    object ComplexNumbers { 
+      def main(args: Array[String]) {
+        val c = new Complex(1.2, 3.4) 
+        println("imaginary part: " + c.im())
+      }
+    }
+
+Il serait tellement plus agréable de pouvoir s'en passer... Heureusement,
+Scala le permet. Il suffit de définir les méthodes comme des méthodes *sans
+arguments*. De telles méthodes différent dans leurs définitions, par le fait,
+qu'elle n'ont pas de parenthèses dans leurs déclarations. Ainsi, on peut
+réécrire notre classe Complexe comme ceci:
+
+    class Complex(real: Double, imaginary: Double) {
+      def re = real 
+      def im = imaginary
+    }
+
+### Héritage et surcharge
+
+Toutes les classes en scala hérite d'une super-classe. Lorsqu'aucune classe
+n'est spécifiée comme dans la classe Complex de la section précédente,
+scala.AnyRef est utilisée implicitement.
+
+Il est possible de surcharger les méthodes héritées d'une classe parente
+en Scala mais il est obligatoire d'expliciter la surcharge avec le mot clef
+**override**, pour prévenir toute erreur potentielle. Par exemple, notre
+classe Complexe peut être complétée par une redéfinition de la méthode
+*toString* héritée de *Object*.
+
+    class Complex(real: Double, imaginary: Double) {
+      def re = real
+      def im = imaginary
+      override def toString() =
+	    "" + re + (if (im < 0) "" else "+") + im + "i"
+    }
+
+# Case Classes et pattern matching
+
+Un type de structure souvent utilisé dans les programmes est l'arbre (tree).
+Par exemple, les interpréteurs et les compilateurs représentent les programmes
+en interne comme des arbres; les documents XML comme des arbres; de nombreux
+types de conteneurs comme des arbres comme les red-black trees.
+
+Nous allons maintenant étudier comment représenter des tels arbres et les
+manipuler en Scala. L'objectif du programme suivant est de manipuler de 
+petites expressions arithmétiques composées de somme, de constantes et de
+variables comme 1+2 et (x+x)+(7+y).
+
+Pour représenter de telles expressions, il est naturel d'utiliser un arbre
+où les noeuds sont les opérations (ici l'addition) et les feuilles des valeurs.
+
+En java, un tel arbre serait représenté ainsi :
+
+- une classe parente pour les arbres;
+- une classe fille pour les noeuds ou feuilles.
+
+Dans un langage fonctionnel, on utiliserait une structure algébrique. Scala
+fournit un concept médian. Voici comment représenter un tel type d'arbre:
+
+    abstract class Tree 
+    case class Sum(l: Tree, r: Tree) extends Tree 
+    case class Var(n: String) extends Tree 
+    case class Const(v: Int) extends Tree
+
+Le fait que les classes Sum, Var et Const soient déclarées comme des classes
+case signifie qu'elle diffère des classes standards par de nombreux aspects :
+
+- le mot clef **new** n'est pas obligatoire pour créer des instances de tels
+classes (on peut écrire Const(5) au lieu de new Const(5));
+- les fonctions getters sont définies automatiquement pour les paramètres du
+constructeurs (ie il est possible d'obtenir la valeur du constructeur v
+d'une instance c de la classe Const juste en écrivant c.v);
+- les définitions par défaut des méthodes *equals* et *hashCode* sont fournies
+et sont basées sur l'égalité de contenu et non l'égalité des références;
+- une méthode toString est fournie (la méthode toString sur l'arbre x+1
+afficherait Sum(Var(x), Const(1)));
+- les instance de ces classes peuvent être décomposées par *pattern matching*
+comme nous le verrons par la suite.
 
