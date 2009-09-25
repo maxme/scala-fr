@@ -1,4 +1,0 @@
-#External Dependencies
-#Fri Sep 25 18:32:58 CEST 2009
-/Users/max/work/blogcode/scala-fr/scala-fr/src/sbttest/project/boot/scala-2.7.5/lib/scala-library.jar=src/main/scala/sbttest.scala
-/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar=src/main/scala/sbttest.scala
