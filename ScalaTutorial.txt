@@ -1,21 +1,22 @@
 # Tutoriel Scala pour développeurs Java
 
-Texte original par Michel Schinz, Philipp Haller
-
-Traduction par Laurent Mallet et Maxime Biais
+Texte original par Michel Schinz, Philipp Haller. Traduction par Laurent
+Mallet et Maxime Biais. La dernière version de ce document est disponible sur
+le site [scala-fr](http://www.scala-fr.org/).
 
 ## Introduction
 
-Ce document est une introduction rapide au langage Scala et à son compilateur. Il a pour
-cible les développeurs expérimentés et pour objectif la découverte des possibilités
-fournies par le langage Scala. La connaissance de la programmation object en java est
-un pré-requis.  
+Ce document est une introduction rapide au langage Scala et à son compilateur.
+Il a pour cible les développeurs expérimentés et pour objectif la découverte
+des possibilités fournies par le langage Scala. La connaissance de la
+programmation objet en java est un pré-requis.
 
 ## Premier exemple
 
-Comme premier exemple, nous allons écrire le très classique HelloWorld. Guère passionant
-mais cela nous permettra de nous familiariser avec les outils de Scala sans trop dépendre
-des spécificités du langage. Voici le très fameux HelloWorld:
+Comme premier exemple, nous allons écrire le très classique HelloWorld. Guère
+passionnant mais cela nous permettra de nous familiariser avec les outils de
+Scala sans trop dépendre des spécificités du langage. Voici le très fameux
+HelloWorld:
 
 
     object HelloWorld { 
@@ -25,51 +26,55 @@ des spécificités du langage. Voici le très fameux HelloWorld:
     }
 
 
-La structure du programme ne devrait pas déconcerté les développeurs Java. On découvre
-une méthode *main* qui récupère les arguments en ligne de commande sous forme d'un
-tableau de chaînes de caractères comme paramètre. Le corps de la méthode consiste en
-un simple appel à la méthode prédéfinie *println* avec la fameuse formule. La méthode
-*main* ne retourne rien (c'est une procédure). C'est pourquoi il n'y a aucune
-déclaration de type de retour.
+La structure du programme ne devrait pas déconcerter les développeurs Java. On
+découvre une méthode *main* qui récupère les arguments en ligne de commande
+sous forme d'un tableau de chaînes de caractères comme paramètre. Le corps de
+la méthode consiste en un simple appel à la méthode prédéfinie *println* avec
+en paramètre, le fameux message. La méthode *main* ne retourne rien (c'est une
+procédure). C'est pourquoi il n'y a aucune déclaration de type de retour.
 
-La nouveauté pour les développeurs Java est la déclaration **object** qui contient la
-méthode main. En fait, il s'agit ni plus ni moins qu'une déclaration de singleton, c'est
-à dire une classe avec une unique instance. Cette déclaration indique la définition d'une
-classe et d'une unique instance, qui sera créée lors de sa première utilisation.
+La nouveauté pour les développeurs Java est la déclaration **object** qui
+contient la méthode main. En fait, il s'agit ni plus ni moins qu'une
+déclaration de singleton, c'est à dire une classe avec une unique instance.
+Cette déclaration indique la définition d'une classe et d'une unique instance,
+qui sera créée lors de sa première utilisation.
 
-Le lecteur attentif aura noté que la méthode main n'est pas déclarée comme *statique* avec
-le mot clef *static*. Ce mot clef n'existe pas en Scala (ni pour les méthodes ni pour
-les champs). Le développeur Scala utilisera donc les singletons en lieu et place de static.
+Le lecteur attentif aura noté que la méthode main n'est pas déclarée comme
+*statique* avec le mot clef *static*. Ce mot clef n'existe pas en Scala (ni
+pour les méthodes ni pour les champs). Le développeur Scala utilisera donc les
+singletons en lieu et place de static.
 
 ## Compilation de l'exemple
 
-Pour compiler l'exemple, nous utilisons *scalac*, le compilateur scala. *scalac* fonctionne
-comme de nombreux compilateurs: il prend comme argument un fichier source, avec souvent des
-options et produit un ou plusieurs fichiers binaires. Les binaires produits sont en fait des
-fichiers standards *.class* .
+Pour compiler l'exemple, nous utilisons *scalac*, le compilateur scala.
+*scalac* fonctionne comme de nombreux compilateurs : il prend comme argument
+un fichier source, avec souvent des options et produit un ou plusieurs
+fichiers binaires. Les binaires produits sont en fait des fichiers standards
+en bytecode Java, les *.class* .
 
-Si nous avons sauvé le programme précédent dans un fichier appelé HelloWorld.scala, nous
-pouvons le compiler avec la commande suivante (le symbole '>' représente le prompt):
-
-
-    > scalac HelloWorld.scala
-
+Après avoir sauvegardé le programme précédent dans le fichier
+HelloWorld.scala, nous pouvons le compiler avec la commande suivante (le
+symbole '>' représente le prompt):
 
 
-Ceci va générer quelques fichiers class dans le répertoire courant, dont l'un d'entre eux
-s'appelle **HelloWorld.class**, et contient une classe qui peut être directement exécutée
-en utilisant la commande scala comme le montre la section précédente.
+    $ scalac HelloWorld.scala
+
+
+
+Ceci va générer quelques fichiers class dans le répertoire courant, dont l'un
+d'entre eux s'appelle **HelloWorld.class**, et contient une classe qui peut
+être directement exécutée en utilisant la commande scala comme le montre la
+section précédente.
 
 ## Faire fonctionner l'exemple
 
 Une fois compilé, un programme Scala peut être exécuté avec la commande
-*Scala*. Son usage est semblable à la commande java et accepte les mêmes
+*scala*. Son usage est semblable à la commande java et accepte les mêmes
 options. L'exemple précédent peut être exécuté en utilisant la commande
 suivante qui produit le résultat attendu :
 
 
-    > scala -classpath . HelloWorld
-    
+    $ scala -classpath . HelloWorld
     Hello, world!
 
 
@@ -84,9 +89,8 @@ Un petit exemple vaut mieux que 10 pages d'explications. Nous allons tenter
 d'obtenir et d'afficher la date en respectant les conventions d'un pays
 spécifique, par exemple la France.
 
-
-Les librairies Java constituent de puissants outils, telless que les classes
-*Date* et *DateFormat*. Comme Scala interopère très bien avec java, point
+Les bibliothèques Java constituent de puissants outils, telles que les classes
+*Date* et *DateFormat*. Comme Scala interopère très bien avec java, pas
 besoins de réimplementer des classes équivalentes. Il suffit de les 
 importer:
 
@@ -104,15 +108,12 @@ importer:
 
 
 
-Note: Scala est d'origine suisse et certains suisses parlent le français
-d'où ce choix.
-
 L'import Scala est très similaire à l'équivalent Java, mais il est toutefois
 plus puissant. De multiples classes peuvent être importées avec les accolades.
-Une autre différence, il est possible d'importer tous les noms d'un package
-ou d'une classe en utilisant le caractère undescore (_) au lieu de l'asterisque
-(*). Ce dernier point est du au faut que le caractère * est un identifiant
-Scala, comme nous le verrons plus tard.
+Une autre différence, il est possible d'importer tous les noms d'un package ou
+d'une classe en utilisant le caractère underscore (_) au lieu de l'étoile (*).
+Ce dernier point est du au faut que le caractère * est un identifiant Scala,
+comme nous le verrons plus tard.
 
 L'import utilisé en troisième ligne importe tous les membres de la classe
 DateFormat et rend visibles également les méthodes statiques comme 
@@ -121,7 +122,7 @@ getDateInstance et le champ statique LONG.
 Dans la méthode main nous créons une instance de la classe Java Date qui
 contient par défaut la date courante. Ensuite, nous définissons le format
 désiré avec la locale France. La dernière ligne montre une propriété
-élégante de la syntace Scala. Les méthodes avec un unique argument peuvent
+élégante de la syntaxe Scala. Les méthodes avec un unique argument peuvent
 se passer de parenthèse (infix syntax). Ainsi la ligne
 
     df format now
@@ -133,11 +134,11 @@ est équivalent à
 Ceci pourrait sembler être un détail mineur mais cela des conséquences
 importantes comme nous allons le voir dans la section suivante.
 
-Pour conclure cette section concernant l'intégration avec Java, il doit
-être noté qu'il possible également d'hériter de classes Java et d'implémenter
+Pour conclure cette section concernant l'intégration avec Java, il doit être
+noté qu'il est également possible d'hériter de classes Java et d'implémenter
 des classes Java directement en Scala.
 
-# Tout est object
+# Tout est objet
 
 Scala est langage **pur objet**, dans le sens où tout est un objet, que
 ce soit les nombres où les fonctions. Cela diffère avec Java où certains
@@ -147,7 +148,7 @@ les fonctions ne peuvent être manipulées comme des valeurs.
 ## Les nombres sont des objets
 
 Comme les nombre sont des objets, ils ont des méthodes. En fait, l'expression
-arithèmitique suivante :
+arithmétique suivante :
 
     1 + 2 * 3 / x
 
@@ -155,10 +156,13 @@ consiste en des appel de méthodes *infix*:
 
     (1).+(((2).*(3))./(x))
 
-Cela signifie que +, *, ... sont des identifiants valides en Scala.
+Cela signifie que +, *, ... sont des identifiants valides en Scala. Identifiants de méthodes, ou même identifiant de variables, cet exemple imprimera <code>2</code> :
+	
+	val ++ = 1
+	println(1 + ++)
 
 Les parenthèses autour des nombres dans la seconde version sont nécessaires
-car le parseur Scala utilise une reconnaissance d'expression basé sur la plus
+car le parser Scala utilise une reconnaissance d'expression basé sur la plus
 longue expression reconnue. Ainsi, l'expression suivante :
 
     1.+(2)
@@ -173,23 +177,24 @@ préviens 1 d'être interprété comme un *Double*.
 
 ## Les fonctions sont des objets
 
-Peut être le plus étonnant pour un développeur Java, les fonctions sont
-des objets en Scala. Il est alors possible de passer des fonctions comme
-un argument et de les stocker dans des variables et des les faire manipuler
-par d'autres fonctions. Ce paradigme est la programmation fonctionnelle.
+Peut être le plus étonnant pour un développeur Java, les fonctions sont des
+objets en Scala. Il est alors possible de passer des fonctions comme un
+argument et de les stocker dans des variables et de les manipuler avec
+d'autres fonctions. Ce paradigme est nommé programmation fonctionnelle.
 
 Comme exemple des possibilités offertes, nous allons considérer une fonction
 *timer* qui doit réaliser une action toutes les secondes. Comment transmettre
 l'action à réaliser ? Simplement comme une fonction. Ce type de passage
-doit être familié à de nombreux développeurs. Ceci est souvent utilisé
+doit être familier à de nombreux développeurs. Ceci est souvent utilisé
 dans la définition de GUI où l'on utilise des fonctions *callbacks*.
 
-Dans le programme suivant, la fonction timer est appelée oncePerSecond et
-elle prend une fonction callback en argument. La fonction est déclarée comme
-() => Unit ce qui correspond à une fonction qui ne prend pas aucun argument
-et retourne rien (le type Unit correspond au type void en C/C++). La fonction
-principale de ce programme appelle simplement cette fonction timer avec un
-callback qui affiche une phrase sur le terminal "time flies like an arrow..."
+Dans le programme suivant, la fonction timer est appelée oncePerSecond, elle
+prend une fonction callback en argument. La fonction est déclarée comme
+<code>() => Unit</code> ce qui correspond à une fonction qui ne prend aucun
+argument et ne retourne rien (le type Unit correspond au type void en C/C++).
+La fonction principale de ce programme appelle simplement cette fonction timer
+avec un callback qui affiche une phrase sur le terminal "time flies like an
+arrow..."
 
 
     object Timer {
@@ -206,10 +211,10 @@ callback qui affiche une phrase sur le terminal "time flies like an arrow..."
 	  }
 	}
 
-Note: nous avons utilisé la fonction prédefinie println et non celle correspndant
-à System.out
+Note: nous avons utilisé la fonction prédefinie println et non celle
+correspndant à System.out
 
-### Fonction anonymes
+### Fonctions anonymes
 
 Comme ce programme est simple à comprendre, il est possible de l'affiner
 quelque peu. Premièrement, remarquons que la fonction timeFlies est 
@@ -226,21 +231,22 @@ fonction anonyme donne :
       }
 
       def main(args: Array[String]) {
-        oncePerSecond(() => 
-          println("time flies like an arrow..."))
+        oncePerSecond(() => println("time flies like an arrow..."))
       }
     }
 
 La présence de fonction anonyme dans cet exemple est révélé par la flèche
-droite *=>* qui sépare les arguments de la fonction de son corps. Dans cet
-exemple, la liste des arguments est vide d'où le () à la droite de =>. Le
-corps de la fonction anonyme ne change pas.
+droite <code>=></code> qui sépare les arguments de la fonction de son corps.
+Dans cet exemple, la liste des arguments est vide d'où le <code>()</code> à la
+droite de <code>=></code>. Le corps de la fonction anonyme ne change pas.
 
 ## Les Classes
 
 Comme vu auparavant, Scala est un langage orienté objet et donc possède le
-concept de classe. Les classes sont déclarés en Scala dans une syntaxe proche
-du java. Une différence est que les classes en Java peuvent avoir des parametres.
+concept de classe. Les classes sont déclarées en Scala dans une syntaxe proche
+du Java. Une différence est que les classes en Java peuvent avoir des
+paramètres.
+
 Ceci est illustré dans la définition de la classe Complex
 
     class Complex(real: Double, imaginary: Double) {
@@ -249,10 +255,10 @@ Ceci est illustré dans la définition de la classe Complex
     }
 
 La classe Complex prend deux arguments qui sont les parties réelles et
-imaginaires d'un complexe. Ces deux arguments doivent être fourni lors
-la création d'une instance de la classe Complex comme ceci:
-**new** Complex(1.5, 2.3). La classe contient deux méthodes appellées
-re et im donnant accès à ces deux valeurs.
+imaginaires d'un nombre complexe. Ces deux arguments doivent être fournis lors
+la création d'une instance de la classe Complex comme ceci: 
+<code>new Complex(1.5, 2.3)</code>. La classe contient deux méthodes 
+appellées re et im donnant accès à ces deux valeurs.
 
 Il doit être noté que le type retour de ces méthodes n'est pas donné
 explicitement. Ils sont déduits automatiquement par le compilateur, qui
@@ -264,7 +270,7 @@ n'arrive pas à déduire les types, il émet une erreur et vous devrez donc
 lui fournir explicitement le type retour. Avec l'expérience, vous serez
 capable de sentir quand préciser le type ou ne pas le préciser.
 
-### Methodes sans arguments
+### Méthodes sans arguments
 
 Un petit problème des méthodes re et im est qu'il est nécessaire de les
 appeler avec une paire de parenthèses vides comme le montre cet exemple:
@@ -296,7 +302,7 @@ scala.AnyRef est utilisée implicitement.
 Il est possible de surcharger les méthodes héritées d'une classe parente
 en Scala mais il est obligatoire d'expliciter la surcharge avec le mot clef
 **override**, pour prévenir toute erreur potentielle. Par exemple, notre
-classe Complexe peut être complétée par une redéfinition de la méthode
+classe Complex peut être complétée par une redéfinition de la méthode
 *toString* héritée de *Object*.
 
     class Complex(real: Double, imaginary: Double) {
@@ -306,12 +312,12 @@ classe Complexe peut être complétée par une redéfinition de la méthode
 	    "" + re + (if (im < 0) "" else "+") + im + "i"
     }
 
-# Case Classes et pattern matching
+# Case classes et pattern matching
 
 Un type de structure souvent utilisé dans les programmes est l'arbre (tree).
 Par exemple, les interpréteurs et les compilateurs représentent les programmes
 en interne comme des arbres; les documents XML comme des arbres; de nombreux
-types de conteneurs comme des arbres comme les red-black trees.
+types de conteneurs comme des arbres comme les arbres rouge-noir.
 
 Nous allons maintenant étudier comment représenter des tels arbres et les
 manipuler en Scala. L'objectif du programme suivant est de manipuler de 
@@ -340,7 +346,7 @@ case signifie qu'elle diffère des classes standards par de nombreux aspects :
 - le mot clef **new** n'est pas obligatoire pour créer des instances de tels
 classes (on peut écrire Const(5) au lieu de new Const(5));
 - les fonctions getters sont définies automatiquement pour les paramètres du
-constructeurs (ie il est possible d'obtenir la valeur du constructeur v
+constructeurs (ie. il est possible d'obtenir la valeur du constructeur v
 d'une instance c de la classe Const juste en écrivant c.v);
 - les définitions par défaut des méthodes *equals* et *hashCode* sont fournies
 et sont basées sur l'égalité de contenu et non l'égalité des références;
@@ -358,13 +364,13 @@ qui associe la valeur 5 à la variable x, écrit par {x->5} renvoie 6.
 
 Par ailleurs, il faut une structure pour représenter un environnement.
 Il est possible d'utiliser une table de hashage mais nous allons utiliser
-directement des fonctions! En effet, un environnement n'est rien de plus
+directement des fonctions ! En effet, un environnement n'est rien de plus
 qu'une fonction qui associe une valeur à variable. L'environnement 
 {x->5} donné auparavant peut être simplement écrit comme :
 
     { case "x" => 5 }
 
-Cette notation définit une fonction qui quand on donne une chaine "x"
+Cette notation définit une fonction qui quand on donne une chaîne "x"
 comme argument retourne 5 et échoue avec une exception autrement.
 
 Avant d'écrire une fonction d'évaluation, donnons un nom au type chargés
@@ -378,7 +384,7 @@ avec la notation suivante :
 Maintenant, le type Environment peut être utilisé comme un alias.
 
 Nous pouvons maintenant donner une définition à la fonction d'évaluation.
-Conceptuellement, c'est très simple: la valeur d'une somme de deux
+Conceptuellement, c'est très simple : la valeur d'une somme de deux
 expressions est simplement la somme des deux valeurs de ces deux expressions;
 la valeur d'une variable est obtenue directement par l'environnement; et la
 valeur d'une constante est la constante même. Ecrire ceci en Scala n'est
@@ -390,26 +396,26 @@ guère compliqué :
       case Const(v)  => v
     }
 
- La fonction d'évaluation fonctionne en réalisant une recherche sur
+La fonction d'évaluation fonctionne en réalisant une recherche sur
 l'arbre t. Intuitivement, le sens de la définition précédente est
 claire :
 
 1. Premièrement, cette fonction vérifie si l'arbre t est une somme. Si
 c'est le cas, il lie l'arbre t à la variable l et l'environnement env
 à r et réalise l'évaluation à droite;
-2. si le premier case ne correspond pas, on passe on suivant, on vérifie
-s'il s'agit d'une variable
-3. en cas de nouvel echec, on vérifie s'il s'agit d'une constante
+2. si le premier case ne correspond pas, on passe au suivant, on vérifie
+qu'il s'agit d'une variable;
+3. en cas de nouvel echec, on vérifie s'il s'agit d'une constante;
 4. enfin, si aucune correspondance n'est trouvée, une exception est 
 déclenchée.
 
 Nous voyons ainsi que le concept de *pattern matching* est une recherche
 de correspondance.
 
-Un développeur ayant des notions de programmation object rétorquerait
+Un développeur ayant des notions de programmation objet rétorquerait
 qu'il serait tout aussi possible de définir la fonction eval pour 
 la classe Tree et ses classes filles. Ceci est tout à fait possible. Ce
-choix n'est pas qu'une question de gout. En fait, il s'agit surtout
+choix n'est pas qu'une question de goût. En fait, il s'agit surtout
 d'extensibilité :
 
 - quand on utilise l'héritage de méthodes, il est facile d'ajouter de
@@ -418,7 +424,7 @@ tous les types de noeuds pour prendre en compte la nouvelle opération;
 - quand on utilise le pattern matching, la situation est inversée : ajouter
 une nouvelle sorte de noeud nécessite la modification de toutes les fonctions
 qui réalise le pattern matching de l'arbre; mais ajouter une nouvelle
-opération est simplicissime en définissant juste une nouvelle fonction;
+opération est simplicissime en définissant juste une nouvelle fonction.
 
 Pour explorer davantage le *pattern matching*, nous allons définir une
 autre opération sur les expressions arithmétiques: la dérivée. Rappelez
@@ -438,11 +444,11 @@ Ces règles peuvent simplement être traduite en Scala par :
     }
 
 Cette fonction introduit deux nouveaux concepts relatifs au *pattern
-matching*. Avant tout chose, notre expression case dispose d'une
-condition sur un case; on appelle ceci une *guard*. Cette *guard* indique
-sur le second case que si seulement si v==n alors on retourne Const(1).
-La seconde nouveauté est le *wild-card*, noté _ qui indique le cas par
-défaut si rien ne correspond.
+matching*. Avant tout chose, notre expression case dispose d'une condition sur
+un case; on appelle ceci une *guard*. Cette *guard* indique sur le second case
+que si seulement si v==n alors on retourne Const(1). La seconde nouveauté est
+le caractère *wild-card*, noté _ (underscore) qui indique le cas par défaut si
+rien ne correspond.
 
 Nous n'allons pas davantage explorer le pattern matching pour ne pas
 alourdir ce document. Mais avant de quitter ce concept, nous allons
@@ -469,11 +475,12 @@ L'exécution de ce programme, nous donne:
       Sum(Sum(Const(1),Const(1)),Sum(Const(0),Const(0)))
 	Derivative relative to y: 
 	  Sum(Sum(Const(0),Const(0)),Sum(Const(0),Const(1)))
-  
-En examinant les résultats, on s'aperçoit que l'on pourrait simplifier
-les valeurs pour nos utilisateurs. Définir une fonction de simplification
-en utilisant le matching pattern est très intéressant car pas si aisé.
-Nous vous laissons ce petit plaisir.
+
+
+En examinant les résultats, on s'aperçoit que l'on pourrait simplifier les
+valeurs pour nos utilisateurs. Définir une fonction de simplification en
+utilisant le pattern matching est très intéressant car pas si aisé. Nous vous
+laissons ce petit plaisir.
 
 # Traits
 
@@ -484,7 +491,7 @@ Importer du code dans une classe, peut être réalisé soit:
 
 Pour un développeur Java, un trait peut être vu comme une interface
 qui contiendrait du code. En scala, quand une classe hérite d'un *trait*,
-elle implemente son interface et hérite de tout le code contenu dans le
+elle implémente son interface et hérite de tout le code contenu dans le
 *trait*.
 
 Pour comprendre l'intérêt des traits, nous allons utiliser un exemple
@@ -516,10 +523,10 @@ toutes les types en Scala. Il peut être comparé à une version plus génériqu
 encore que le type *Object* en Java. Pour rappel, tout est objet en Scala 
 (Int, Float...).
 
-Pour rendre des objets d'une class comparable, il suffit alors de définir
+Pour rendre des objets d'une classe comparable, il suffit alors de définir
 les prédicats qui testent l'égalité et l'infériorité et greffer la classe
 Ord. Comme exemple, définissons une classe Date, représentant des dates
-dans le calendrier Gregorian. De telles dates sont composées d'une journée,
+dans le calendrier Grégorien. De telles dates sont composées d'une journée,
 d'un mois et d'une année sous forme d'entiers. Voici le code: 
 
     class Date(y: Int, m: Int, d: Int) extends Ord {
@@ -549,7 +556,7 @@ Cette méthode utilise des méthodes prédéfinies:
 
 - isInstanceOf: ceci correspond à l'opérateur Java instanceof qui retourne
 vraie si et seulement si l'objet est bien une instance du type demandé
-- InstanceOf: ceci correspond à l'opérateur cast de java.
+- asInstanceOf: ceci correspond à l'opérateur cast de java.
 
 Enfin, la dernière méthode à définir est l'infériorité. Elle utilise une
 autre méthode prédéfinie error qui émet une exception avec le message
@@ -567,9 +574,8 @@ Ceci complète la définition de notre classe Date. Une instance Date
 peut ainsi être vu soit comme une date soit comme un objet comparable.
 Enfin, ce code définit et implémente les 6 opérations de comparaisons.
 
-Les traits peuvent être utilisé dans d'autres situations que celles
-décrites ci-dessus. Mais discuter plus avant de leur usage dépasse le
-cadre de ce document.
+Les traits peuvent être utilisé dans d'autres situations que celles décrites
+ci-dessus. Mais discuter plus de leur usage dépasse le cadre de ce document.
 
 # Généricité
 
@@ -579,7 +585,7 @@ engendrés par l'absence de la généricité dans leur langage même si une
 approche a été implémentée dans Java 1.5.
 
 La généricité est la capacité d'écrire un code dont les types peuvent être
-paramétrés. Par exemple, un développeur qui écrit une librairie pour des
+paramétrés. Par exemple, un développeur qui écrit une bibliothèque pour des
 listes chainées rencontrera le problème des types qui peuvent être utilisés
 dans sa liste chainée. Comme la liste peut être utilisée dans différents
 contextes, il n'est pas possible de décider que le type d'élément supporté
@@ -588,10 +594,10 @@ est Int. Ceci serait complètement arbitraire et trop restrictif.
 Un développeur Java utiliserait probablement un héritage de la classe Object.
 Cette solution est toutefois loin d'être idéale puisque cela ne marche pas
 avec les types basiques et implique que de nombreux *dynamic cast* seront
-utilisés par les utilisateurs de la librairie.
+utilisés par les utilisateurs de la bibliothèque.
 
 Scala permet de définir des classes génériques (et des méthodes) pour résoudre
-ce problème. Etudions pour cela un conteneur simpliste: une référence
+ce problème. Etudions pour cela un conteneur simpliste : une référence
 qui peut soit contenir un objet d'un type soit rien.
 
   class Reference[T] { 
