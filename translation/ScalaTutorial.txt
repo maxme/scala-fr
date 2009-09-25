@@ -1,8 +1,6 @@
-# Tutoriel Scala pour développeurs Java
-
 Texte original par Michel Schinz, Philipp Haller. Traduction par Laurent Mallet et Maxime Biais. La dernière version de ce document est disponible sur le site [scala-fr](http://www.scala-fr.org/).
 
-## Introduction
+# Introduction
 
 Ce document est une introduction rapide au langage Scala et à son compilateur. Il a pour cible les développeurs expérimentés et pour objectif la découverte des possibilités fournies par le langage Scala. La connaissance de la programmation objet en java est un pré-requis.
 
