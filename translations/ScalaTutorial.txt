@@ -77,7 +77,7 @@ Dans la méthode main nous créons une instance de la classe Java Date qui conti
 
 est équivalent à 
 
-    df format(now)
+    df.format(now)
 
 Ceci pourrait sembler être un détail mineur mais cela des conséquences importantes comme nous allons le voir dans la section suivante.
 
